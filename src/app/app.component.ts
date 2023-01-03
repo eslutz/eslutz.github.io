@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +6,18 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'eslutz.github.io';
+  makeItStick: boolean = false;
+  mobileNav: boolean = false;
+
+  @HostListener('window:scroll', ['$event'])
+  checkScroll() {
+    this.makeItStick = window.pageYOffset > 82;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  checkSize() {
+    this.mobileNav = window.innerWidth <= 1082;
+    console.log(window.innerWidth);
+    console.log(this.mobileNav);
+  }
 }

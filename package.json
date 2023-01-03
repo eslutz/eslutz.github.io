@@ -1,6 +1,21 @@
 {
   "name": "eslutz.github.io",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Portfolio website for Eric Slutz.",
+  "homepage": "https://www.ericslutz.dev",
+  "bugs": {
+    "url" : "https://github.com/eslutz/eslutz.github.io/issues",
+    "email" : "eric@ericslutz.dev"
+  },
+  "author": {
+    "name" : "Eric Slutz",
+    "email" : "eric@ericslutz.dev",
+    "url" : "https://www.ericslutz.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eslutz/eslutz.github.io.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
