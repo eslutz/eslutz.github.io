@@ -1,26 +1,29 @@
 /****************/
 /* PROJECT GRID */
 /****************/
-.grid {
-  -webkit-column-gap: 2rem;
-  -moz-column-gap: 2rem;
-  column-gap: 2rem;
-  row-gap: 2rem;
-  display: -ms-grid;
-  display: grid;
-}
-
-.grid {
-  -ms-grid-columns: 300px 1fr;
-  grid-template-columns: 300px 1fr;
-}
-
 .left-padding--xs {
   padding-left: 5px;
 }
 
 .list-item {
   gap: 4.5rem;
+}
+
+.project {
+  -webkit-column-gap: 2rem;
+  -moz-column-gap: 2rem;
+  column-gap: 2rem;
+  row-gap: 2rem;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 300px 1fr;
+  grid-template-columns: 300px 1fr;
+}
+
+.project:not(:last-child) {
+  margin: 0 0 3rem 0;
+  padding: 0 0 2rem 0;
+  border-bottom: 0.15rem solid #d6d6d6;
 }
 
 .project-description {
