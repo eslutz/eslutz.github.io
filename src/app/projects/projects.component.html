@@ -128,9 +128,9 @@
           </div>
         </li>
       </ul>
-      </div>
-      <div class="project">
-        <p class="project-description">
+    </div>
+    <div class="project">
+      <p class="project-description">
         <i class="fa-solid fa-angles-right"></i>
         <strong class="left-padding--xs">Omnifood Website v2</strong>
       </p>
@@ -162,9 +162,9 @@
           </div>
         </li>
       </ul>
-      </div>
-      <div class="project">
-        <p class="project-description">
+    </div>
+    <div class="project">
+      <p class="project-description">
         <i class="fa-solid fa-angles-right"></i>
         <strong class="left-padding--xs">Omnifood Website</strong>
       </p>
@@ -190,6 +190,33 @@
           <div>
             <i class="fa-brands fa-github"></i>:
             <a class="link" href="https://github.com/eslutz/Udemy-Responsive-Website" target="_blank">
+              Code
+              <i class="fa-solid fa-arrow-up-right-from-square left-padding--xs"></i>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="project">
+      <p class="project-description">
+        <i class="fa-solid fa-angles-right"></i>
+        <strong class="left-padding--xs">GitHub Actions Workflow</strong>
+      </p>
+      <ul class="list">
+        <li class="list-item">
+          <div class="project-description">
+            <p>
+              This repository contains several workflow files that other repos can then call using the GitHub Actions <a href="https://docs.github.com/en/actions/using-workflows/sharing-workflows-secrets-and-runners-with-your-organization#sharing-workflows" target="_blank">Shared Workflows</a> feature.  The shared workflow files are configured to build the code from the calling repo, run unit tests, and run a static analysis using <a href="https://github.com/marketplace/actions/snyk" target="_blank">Snyk</a> to check for dependency vulnerabilities.  An additional workflow could be called to package and publish a library NuGet package to NuGet.org.
+            </p>
+            <p>
+              The shared workflow can be called by copying the pre-made workflow files from the <strong><code>Generic Workflows</code></strong> folder into the target repos.  These workflows, when triggered, would call the workflow files in the specified repo.  They were written so that the unit test and static analysis workflows would run for any new pull request or updates to a pull request in the calling repo.  The workflow to package and publish a NuGet file would be run any time a new release is created in the calling repo.
+            </p>
+          </div>
+        </li>
+        <li class="list-item">
+          <div>
+            <i class="fa-brands fa-github"></i>:
+            <a class="link" href="https://github.com/eslutz/RockLib.Workflows" target="_blank">
               Code
               <i class="fa-solid fa-arrow-up-right-from-square left-padding--xs"></i>
             </a>
