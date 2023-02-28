@@ -1,0 +1,67 @@
+name: Prod Deploy to AWS
+
+#########################################################################################
+##  WORKFLOW TRIGGER
+#########################################################################################
+on:
+  # Workflow will run when a release is published.
+  release:
+    types: [ released ]
+
+#########################################################################################
+##  PERMISSIONS
+#########################################################################################
+# These permissions are needed to interact with GitHub's OIDC Token endpoint.
+permissions:
+  id-token: write
+  contents: read
+
+#########################################################################################
+##  WORKFLOW JOBS
+#########################################################################################
+jobs:
+  build:
+    name: Build Portfolio Site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build:prod
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/eslutz.github.io
+
+  deploy_to_aws:
+    name: Upload to Amazon S3
+    # This job will not run until build job finishes successfully.
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-duration-seconds: 900 # the ttl of the session, in seconds.
+          aws-region: ${{ vars.AWS_REGION }} # use your region here.
+
+      - name: Deploy
+        if: success()
+        run: aws s3 sync ./ s3://ericslutz.dev
