@@ -7,10 +7,10 @@ import { RecognitionComponent } from './recognition/recognition.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'achievements', component: RecognitionComponent},
-  { path: 'projects', component: ProjectsComponent },
-  { path: '**', component: ErrorComponent }
+  { path: 'home', component: HomeComponent, data: { title: 'Portfolio' } },
+  { path: 'achievements', component: RecognitionComponent, data: { title: 'Achievements' } },
+  { path: 'projects', component: ProjectsComponent, data: { title: 'Projects' } },
+  { path: '**', component: ErrorComponent, data: { title: 'Error' } }
 ];
 
 @NgModule({
