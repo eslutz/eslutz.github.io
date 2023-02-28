@@ -31,6 +31,7 @@
 }
 
 .project-image {
+  border-radius: 5px;
   max-width: 50rem;
 }
 

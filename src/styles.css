@@ -213,6 +213,15 @@ p {
   box-shadow: 0 5px 5px #eee, 0 -5px 5px #eee;
 }
 
+/* UTILITIES */
+.u-center-text {
+	text-align: center;
+}
+
+.u-margin-top-lg {
+	margin-top: 6rem;
+}
+
 /****************/
 /* BELOW 1088px */
 /****************/
