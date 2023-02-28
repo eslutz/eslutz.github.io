@@ -1,4 +1,7 @@
 import { Component, HostListener } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -6,8 +9,35 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  title = 'Portfolio';
   makeItStick: boolean = false;
   mobileNav: boolean = false;
+
+  constructor(private titleService:Title, private router: Router) {
+  }
+
+  ngOnInit() {
+    this.router.events
+    .pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => {
+        let route: ActivatedRoute = this.router.routerState.root;
+        let routeTitle = '';
+        while (route!.firstChild) {
+          route = route.firstChild;
+        }
+        if (route.snapshot.data['title']) {
+          routeTitle = route!.snapshot.data['title'];
+        }
+        return routeTitle;
+      })
+    )
+    .subscribe((title: string) => {
+      if (title) {
+        this.titleService.setTitle(`Eric Slutz | ${title}`);
+      }
+    });
+  }
 
   @HostListener('window:scroll', ['$event'])
   checkScroll() {
