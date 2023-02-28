@@ -13,8 +13,8 @@ on:
 #########################################################################################
 # These permissions are needed to interact with GitHub's OIDC Token endpoint.
 permissions:
-  id-token: write
-  contents: read
+  id-token: write   # this is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
 
 #########################################################################################
 ##  WORKFLOW JOBS
@@ -56,7 +56,7 @@ jobs:
           name: dist
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-duration-seconds: 900 # the ttl of the session, in seconds.
