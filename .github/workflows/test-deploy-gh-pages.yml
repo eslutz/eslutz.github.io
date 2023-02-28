@@ -4,9 +4,9 @@ name: Test Deploy to GitHub Pages
 ##  WORKFLOW TRIGGER
 #########################################################################################
 on:
-  # Workflow will run changes pushed.
-    pull_request:
-      types: [ closed ]
+  # Workflow will run on pull requests to the main branch.
+  pull_request:
+    branches: [ main ]
 
 #########################################################################################
 ##  PERMISSIONS
@@ -22,8 +22,6 @@ permissions:
 jobs:
   build:
     name: Build Portfolio Site
-    # This job will only run if the PR has been merged.
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
