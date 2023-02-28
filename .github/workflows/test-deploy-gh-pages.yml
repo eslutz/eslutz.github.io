@@ -1,20 +1,19 @@
-name: Deploy Angular Portfolio Site
+name: Test Deploy to GitHub Pages
 
 #########################################################################################
 ##  WORKFLOW TRIGGER
 #########################################################################################
 on:
-  # Workflow will run when a release is published.
-  release:
-    types: [ released ]
+  # Workflow will run changes pushed.
+  push
 
 #########################################################################################
-##  OIDC PERMISSIONS
+##  PERMISSIONS
 #########################################################################################
-# These permissions are needed to interact with GitHub's OIDC Token endpoint.
+# Grant GITHUB_TOKEN the permissions required to make a Pages deployment
 permissions:
-  id-token: write
-  contents: read
+  pages: write      # to deploy to Pages
+  id-token: write   # to verify the deployment originates from an appropriate source
 
 #########################################################################################
 ##  WORKFLOW JOBS
@@ -36,32 +35,23 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run build:prod
+        run: npm run build
 
-      - name: Upload dist artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: dist
           path: dist/eslutz.github.io
 
-  deploy_to_aws:
-    name: Upload to Amazon S3
+  deploy_to_gh_pages:
+    name: Deploy to GitHub Pages
     # This job will not run until build job finishes successfully.
     needs: build
     runs-on: ubuntu-latest
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download dist artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-duration-seconds: 900 # the ttl of the session, in seconds.
-          aws-region: ${{ vars.AWS_REGION }} # use your region here.
-
       - name: Deploy
-        if: success()
-        run: aws s3 sync ./ s3://ericslutz.dev
+        id: deployment
+        uses: actions/deploy-pages@v1
