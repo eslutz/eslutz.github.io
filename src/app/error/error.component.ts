@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./error.component.css']
 })
 export class ErrorComponent {
-  countdown: number = 10;
+  countdown: number = 15;
 
   constructor(private router: Router) {}
 
