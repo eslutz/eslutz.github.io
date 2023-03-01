@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     # Creates output variable to be used in steps or other jobs.
     outputs:
-      PACKAGE_VERSION: ${{ steps.variables.outputs.PACKAGE_VERSION }}
+      PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -44,6 +44,7 @@ jobs:
         run: npm run build:prod
 
       - name: Get version number
+        id: version
         run: |
           packageVersion="v$(npm pkg get version | sed 's/"//g')"
           echo "package version: $packageVersion"
@@ -93,13 +94,13 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { RELEASE_VERSION } = process.env
+            const {RELEASE_VERSION} = process.env
 
             try {
               const response = github.rest.repos.createRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                tag_name: process.env.RELEASE_TAG,
+                tag_name: `${RELEASE_VERSION}`,
                 target_commitish: context.sha,
                 name: `Release ${RELEASE_VERSION}`,
                 draft: false,
