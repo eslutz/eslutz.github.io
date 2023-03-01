@@ -93,6 +93,7 @@ jobs:
       - name: Create Release
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GH_API_TOKEN }}
           script: |
             const {RELEASE_VERSION} = process.env
 
