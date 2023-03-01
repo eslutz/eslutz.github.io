@@ -61,7 +61,7 @@ jobs:
     # This job will not run until build job finishes successfully.
     needs: build
     runs-on: ubuntu-latest
-    # Deploy to the prod-ericslutz.dev environment.
+    # Get secrets and deploy to the prod-ericslutz.dev environment.
     environment:
       name: prod-ericslutz.dev
       url: ${{ vars.PROD_URL }}
@@ -87,6 +87,8 @@ jobs:
     # This job will not run until deploy_to_aws job finishes successfully.
     needs: [ build, deploy_to_aws ]
     runs-on: ubuntu-latest
+    # Get secrets from the prod-ericslutz.dev environment.
+    environment: prod-ericslutz.dev
     env:
       RELEASE_VERSION: ${{ needs.build.outputs.PACKAGE_VERSION }}
     steps:
