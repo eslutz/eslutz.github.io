@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { RecognitionComponent } from './recognition/recognition.component';
 import { ErrorComponent } from './error/error.component';
+import { OutsideClickDirective } from './outside-click.directive';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ErrorComponent } from './error/error.component';
     ProjectsComponent,
     RecognitionComponent,
     ErrorComponent,
+    OutsideClickDirective,
   ],
   imports: [
     BrowserModule,
