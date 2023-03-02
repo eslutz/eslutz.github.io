@@ -21,7 +21,7 @@ permissions:
 #########################################################################################
 jobs:
   build:
-    name: Build Portfolio Site
+    name: Build and Test Portfolio Site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: latest
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
       - name: Test
@@ -41,13 +41,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Upload GitHub Pages artifact
+      - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: dist/eslutz.github.io
 
   deploy_to_gh_pages:
-    name: Deploy to GitHub Pages
+    name: Deploy to Test Environment
     # This job will not run until build job finishes successfully.
     needs: build
     runs-on: ubuntu-latest
@@ -56,6 +56,6 @@ jobs:
       name: test-ericslutz.dev
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
