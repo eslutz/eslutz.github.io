@@ -4,13 +4,13 @@
   "description": "Portfolio website for Eric Slutz.",
   "homepage": "https://www.ericslutz.dev",
   "bugs": {
-    "url" : "https://github.com/eslutz/eslutz.github.io/issues",
-    "email" : "eric@ericslutz.dev"
+    "url": "https://github.com/eslutz/eslutz.github.io/issues",
+    "email": "eric@ericslutz.dev"
   },
   "author": {
-    "name" : "Eric Slutz",
-    "email" : "eric@ericslutz.dev",
-    "url" : "https://www.ericslutz.dev"
+    "name": "Eric Slutz",
+    "email": "eric@ericslutz.dev",
+    "url": "https://www.ericslutz.dev"
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:prod": "ng build --optimization",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test-headless": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {
