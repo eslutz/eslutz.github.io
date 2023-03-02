@@ -3,3 +3,25 @@
   max-width: 50rem;
   margin: 0 auto;
 }
+
+/***************/
+/* BELOW 704px */
+/***************/
+@media (max-width: 44em) {
+  .gif-image {
+    max-width: 35rem;
+  }
+}
+
+/***************/
+/* BELOW 435px */
+/***************/
+@media (max-width: 27.2em) {
+  .error-heading {
+    font-size: 3.4rem;
+  }
+
+  .gif-image {
+    max-width: 28rem;
+  }
+}

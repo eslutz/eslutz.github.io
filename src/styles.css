@@ -262,15 +262,16 @@ p {
 }
 
 /***************/
-/* BELOW 408px */
+/* BELOW 435px */
 /***************/
-@media (max-width: 25.5em) {
+@media (max-width: 27.2em) {
   .header-image {
     height: 3rem;
   }
 
   .heading-primary {
     font-size: 4rem;
+    padding-bottom: 2rem;
   }
 
   .heading-secondary {
@@ -283,5 +284,9 @@ p {
 
   .grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .u-margin-top-lg {
+	margin-top: 3rem;
   }
 }
