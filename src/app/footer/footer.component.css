@@ -53,9 +53,9 @@
 }
 
 /***************/
-/* BELOW 408px */
+/* BELOW 435px */
 /***************/
-@media (max-width: 25.5em) {
+@media (max-width: 27.2em) {
   .footer-nav {
     font-size: 1.6rem;
   }

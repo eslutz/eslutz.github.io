@@ -6,9 +6,18 @@ import { Component } from '@angular/core';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent {
-  mobileNav() {
-    const navMenu = document.querySelector(".nav-container");
 
-    navMenu?.classList.toggle("nav-open");
+  outsideMobileNavClick(hasClickedOutside: any) {
+    if (hasClickedOutside) {
+      const navMenu = document.querySelector('.nav-container');
+
+      navMenu?.classList.remove('nav-open');
+    }
+  }
+
+  mobileNavClick() {
+    const navMenu = document.querySelector('.nav-container');
+
+    navMenu?.classList.toggle('nav-open');
   }
 }

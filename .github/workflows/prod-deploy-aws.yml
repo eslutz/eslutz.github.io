@@ -7,6 +7,7 @@ on:
   # Workflow will run when a pull request is closed.
   pull_request:
     types: [ closed ]
+    branches: [ main ]
 
 #########################################################################################
 ##  PERMISSIONS
@@ -37,27 +38,27 @@ jobs:
         with:
           node-version: latest
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
       - name: Build
-        run: npm run build:prod
+        run: npm run build
 
-      - name: Get version number
+      - name: Get Version Number
         id: version
         run: |
           packageVersion="v$(npm pkg get version | sed 's/"//g')"
           echo "package version: $packageVersion"
           echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_OUTPUT
 
-      - name: Upload artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: dist
           path: dist/eslutz.github.io
 
   deploy_to_aws:
-    name: Deploy to Amazon S3 and create release
+    name: Deploy to Prod Environment and Create Release
     # This job will not run until build job finishes successfully.
     needs: build
     runs-on: ubuntu-latest
@@ -68,19 +69,19 @@ jobs:
     env:
       RELEASE_VERSION: ${{ needs.build.outputs.PACKAGE_VERSION }}
     steps:
-      - name: Download artifact
+      - name: Download Artifact
         uses: actions/download-artifact@v3
         with:
           name: dist
 
-      - name: Configure AWS credentials
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: ${{ vars.AWS_REGION }} # use your region here.
 
-      - name: Deploy
+      - name: Deploy to Amazon S3
         if: success()
         run: aws s3 sync ./ s3://ericslutz.dev
 
