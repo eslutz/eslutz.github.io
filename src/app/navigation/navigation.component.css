@@ -123,5 +123,6 @@
     flex-direction: column;
     gap: 3.8rem;
     padding: 3.2rem 0;
+    font-size: 200%;
   }
 }
