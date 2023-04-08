@@ -1,5 +1,8 @@
 name: Azure Static Web Apps CI/CD
 
+#########################################################################################
+##  WORKFLOW TRIGGER
+#########################################################################################
 on:
   push:
     branches:
@@ -9,15 +12,21 @@ on:
     branches:
       - main
 
+#########################################################################################
+##  WORKFLOW JOBS
+#########################################################################################
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest
     name: Build and Deploy Job
+    runs-on: ubuntu-latest
+    # Creates output variable to be used in steps or other jobs.
+    outputs:
+      PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -32,11 +41,43 @@ jobs:
           output_location: "dist/eslutz.github.io" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
+      - name: Get Version Number
+        id: version
+        run: |
+          packageVersion="v$(npm pkg get version | sed 's/"//g')"
+          echo "package version: $packageVersion"
+          echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_OUTPUT
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    name: Create Release and Close Pull Request Job
     runs-on: ubuntu-latest
-    name: Close Pull Request Job
+    needs: build_and_deploy_job
+    env:
+      RELEASE_VERSION: ${{ needs.build_and_deploy_job.outputs.PACKAGE_VERSION }}
     steps:
+      - name: Create Release
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const {RELEASE_VERSION} = process.env
+
+            try {
+              const response = github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: `${RELEASE_VERSION}`,
+                target_commitish: context.sha,
+                name: `Release ${RELEASE_VERSION}`,
+                draft: false,
+                prerelease: false,
+                generate_release_notes: true,
+              });
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+
       - name: Close Pull Request
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
