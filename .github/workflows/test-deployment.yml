@@ -1,0 +1,62 @@
+#########################################################################################
+##  DEPLOY TO AZURE STATIC WEB AOO STAGING ENVIRONMENT
+#########################################################################################
+name: Azure Static Web Apps CI/CD
+
+#########################################################################################
+##  WORKFLOW TRIGGER
+#########################################################################################
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - main
+
+#########################################################################################
+##  WORKFLOW JOBS
+#########################################################################################
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    # Deploy to the staging environment.
+    environment:
+      name: staging-ericslutz.dev
+      url: ${{ vars.STAGING_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Test
+        run: npm run test-headless
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Staging
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
+          repo_token: ${{ secrets.GH_API_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: "upload"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "/" # App source code path
+          api_location: "" # Api source code path - optional
+          output_location: "dist/eslutz.github.io" # Built app content directory - optional
+          skip_app_build: true # Set to true to skip building the front-end app - optional
+          skip_api_build: true # Set to true to skip building the API functions - optional
+          deployment_environment: "staging" # Named environment for deployment - optional
+          ###### End of Repository/Build Configurations ######
