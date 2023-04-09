@@ -1,7 +1,7 @@
 #########################################################################################
-##  DEPLOY TO AZURE STATIC WEB AOO STAGING ENVIRONMENT
+##  DEPLOY TO AZURE STATIC WEB APP PROD ENVIRONMENT
 #########################################################################################
-name: Azure Static Web Apps CI/CD
+name: PROD - Azure Static Web App Deployment
 
 #########################################################################################
 ##  WORKFLOW TRIGGER
@@ -15,10 +15,14 @@ on:
 ##  WORKFLOW JOBS
 #########################################################################################
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    name: Build and Deploy Job
+  build_and_deploy:
+    if: github.event.pull_request.merged == true
+    name: Deploy
     runs-on: ubuntu-latest
+      # Deploy to the prod environment.
+    environment:
+      name: prod-ericslutz.dev
+      url: ${{ vars.PROD_URL }}
     # Creates output variable to be used in steps or other jobs.
     outputs:
       PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
@@ -26,8 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Deploy to Prod
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
@@ -35,10 +38,8 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist/eslutz.github.io" # Built app content directory - optional
-          skip_api_build: true # Set to true to skip building the API functions - optional
+          app_location: "/"
+          output_location: "dist/eslutz.github.io"
           ###### End of Repository/Build Configurations ######
 
       - name: Get Version Number
@@ -48,9 +49,8 @@ jobs:
           echo "package version: $packageVersion"
           echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_OUTPUT
 
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    name: Create Release and Close Pull Request Job
+  create_release:
+    name: Create Release
     runs-on: ubuntu-latest
     needs: build_and_deploy_job
     env:
@@ -78,8 +78,13 @@ jobs:
               core.setFailed(error.message);
             }
 
+  close_staging_environment:
+    if: github.event.action == 'closed'
+    name: Close Staging Environment
+    runs-on: ubuntu-latest
+    steps:
+
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}

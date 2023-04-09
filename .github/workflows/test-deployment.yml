@@ -1,5 +1,5 @@
 #########################################################################################
-##  DEPLOY TO AZURE STATIC WEB AOO STAGING ENVIRONMENT
+##  DEPLOY TO AZURE STATIC WEB APP STAGING ENVIRONMENT
 #########################################################################################
 name: STAGING - Azure Static Web App Deployment
 
@@ -14,7 +14,7 @@ on:
 ##  WORKFLOW JOBS
 #########################################################################################
 jobs:
-  build:
+  build_and_deploy:
     name: Test and Deploy
     runs-on: ubuntu-latest
     # Deploy to the staging environment.
