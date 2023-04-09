@@ -6,7 +6,9 @@ name: Test Deploy to GitHub Pages
 on:
   # Workflow will run on pull requests to the main branch.
   pull_request:
-    branches: [ main ]
+    types: [ closed ]
+    branches:
+      - main
 
 #########################################################################################
 ##  PERMISSIONS
