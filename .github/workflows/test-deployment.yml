@@ -7,9 +7,6 @@ name: Azure Static Web Apps CI/CD
 ##  WORKFLOW TRIGGER
 #########################################################################################
 on:
-  push:
-    branches:
-      - "**"
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches: [ main ]
