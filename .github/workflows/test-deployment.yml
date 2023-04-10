@@ -7,9 +7,8 @@ name: STAGING - Azure Static Web App Deployment
 ##  WORKFLOW TRIGGER
 #########################################################################################
 on:
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-    branches: [ main ]
+  push:
+    branches-ignore: [ main ]
 
 #########################################################################################
 ##  WORKFLOW JOBS
