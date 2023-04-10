@@ -50,6 +50,6 @@ jobs:
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "dist/eslutz.github.io"
           output_location: ""
-          deployment_environment: "staging"
+          deployment_environment: "Staging"
           skip_app_build: true
           ###### End of Repository/Build Configurations ######
