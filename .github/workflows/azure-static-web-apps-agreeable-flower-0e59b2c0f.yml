@@ -1,23 +1,64 @@
 #########################################################################################
 ##  DEPLOY TO AZURE STATIC WEB APP PROD ENVIRONMENT
 #########################################################################################
-name: PROD - Azure Static Web App Deployment
+name: Portfolio Website Azure Static Web App Deployment
 
 #########################################################################################
 ##  WORKFLOW TRIGGER
 #########################################################################################
 on:
   pull_request:
-    types: [ closed ]
+    types: [opened, synchronize, reopened, closed]
     branches: [ main ]
 
 #########################################################################################
 ##  WORKFLOW JOBS
 #########################################################################################
 jobs:
-  build_and_deploy:
+  build_and_deploy_staging:
+    if: github.event.action != 'closed'
+    name: Test and Deploy
+    runs-on: ubuntu-latest
+    # Deploy to the staging environment.
+    environment:
+      name: staging-ericslutz.dev
+      url: ${{ vars.STAGING_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Test
+        run: npm run test-headless
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Staging
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: "upload"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "dist/eslutz.github.io"
+          output_location: ""
+          deployment_environment: "Staging"
+          skip_app_build: true
+          ###### End of Repository/Build Configurations ######
+
+  build_and_deploy_prod:
     if: github.event.pull_request.merged == true
-    name: Deploy
+    name: Deploy to Prod
     runs-on: ubuntu-latest
       # Deploy to the prod environment.
     environment:
@@ -28,20 +69,7 @@ jobs:
       PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Deploy to Prod
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
-          repo_token: ${{ secrets.GH_API_TOKEN }} # Used for Github integrations (i.e. PR comments)
-          action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/"
-          output_location: "dist/eslutz.github.io"
-          deployment_environment: "Production"
-          ###### End of Repository/Build Configurations ######
+        uses: actions/checkout@v3
 
       - name: Get Version Number
         id: version
@@ -53,9 +81,9 @@ jobs:
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: build_and_deploy
+    needs: build_and_deploy_prod
     env:
-      RELEASE_VERSION: ${{ needs.build_and_deploy.outputs.PACKAGE_VERSION }}
+      RELEASE_VERSION: ${{ needs.build_and_deploy_prod.outputs.PACKAGE_VERSION }}
     steps:
       - name: Create Release
         uses: actions/github-script@v6
@@ -79,13 +107,13 @@ jobs:
               core.setFailed(error.message);
             }
 
-  close_staging_environment:
+  close_pull_request_job:
     if: github.event.action == 'closed'
     name: Close Staging Environment
     runs-on: ubuntu-latest
     steps:
-
       - name: Close Pull Request
+        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
