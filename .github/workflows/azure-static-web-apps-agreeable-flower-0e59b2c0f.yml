@@ -61,6 +61,8 @@ jobs:
     if: github.event_name == 'push'
     name: Deploy to Prod
     runs-on: ubuntu-latest
+    outputs:
+      PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
       # Deploy to the prod environment.
     environment:
       name: prod-ericslutz.dev
@@ -68,6 +70,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Get Version Number
+        id: version
+        run: |
+          packageVersion="v$(npm pkg get version | sed 's/"//g')"
+          echo "package version: $packageVersion"
+          echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_OUTPUT
 
       - name: Deploy to Prod
         uses: Azure/static-web-apps-deploy@v1
@@ -80,20 +89,6 @@ jobs:
           app_location: "/"
           output_location: "dist/eslutz.github.io"
           ###### End of Repository/Build Configurations ######
-
-  create_release:
-    name: Create Release
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    outputs:
-      PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
-    steps:
-      - name: Get Version Number
-        id: version
-        run: |
-          packageVersion="v$(npm pkg get version | sed 's/"//g')"
-          echo "package version: $packageVersion"
-          echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: actions/github-script@v6
@@ -117,7 +112,7 @@ jobs:
               core.setFailed(error.message);
             }
 
-  close_pull_request_job:
+  close_staging_environment:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     name: Close Staging Environment
     runs-on: ubuntu-latest
