@@ -40,6 +40,7 @@ jobs:
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "/"
           output_location: "dist/eslutz.github.io"
+          deployment_environment: "Production"
           ###### End of Repository/Build Configurations ######
 
       - name: Get Version Number
