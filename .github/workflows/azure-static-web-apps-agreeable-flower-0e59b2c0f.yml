@@ -1,7 +1,7 @@
 #########################################################################################
-##  DEPLOY TO AZURE STATIC WEB APP PROD ENVIRONMENT
+##  DEPLOY TO AZURE STATIC WEB APP
 #########################################################################################
-name: Portfolio Website Azure Static Web App Deployment
+name: Azure Static Web Apps CI/CD - Portfolio Website
 
 #########################################################################################
 ##  WORKFLOW TRIGGER
@@ -9,13 +9,16 @@ name: Portfolio Website Azure Static Web App Deployment
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '.github/**'
   pull_request:
     types: [ opened, synchronize, reopened, closed ]
-    branches: [ main ]
+    branches: [ main, '!dependabot/**' ]
 
 #########################################################################################
 ##  WORKFLOW JOBS
 #########################################################################################
+
 jobs:
   build_and_deploy_staging:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
