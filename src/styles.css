@@ -241,6 +241,11 @@ p {
   margin-left: 3rem;
 }
 
+.u-flex-col {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 /****************/
 /* BELOW 1088px */
 /****************/
