@@ -8,68 +8,26 @@ name: Azure Static Web Apps CI/CD - Portfolio Website
 #########################################################################################
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - '.github/**'
+    branches:
+      - main
   pull_request:
-    types: [ opened, synchronize, reopened, closed ]
-    branches: [ main, '!dependabot/**' ]
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
 
 #########################################################################################
 ##  WORKFLOW JOBS
 #########################################################################################
-
 jobs:
-  build_and_deploy_staging:
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    name: Deploy to Staging
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    name: Build and Deploy Job
     runs-on: ubuntu-latest
-    # Deploy to the staging environment.
     environment:
-      name: staging-ericslutz.dev
-      url: ${{ steps.deploystaging.outputs.static_web_app_url }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: latest
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Test
-        run: npm run test-headless
-
-      - name: Build
-        run: npm run build
-
-      - name: Deploy to Staging
-        id: deploystaging
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
-          repo_token: ${{ secrets.GH_API_TOKEN }} # Used for Github integrations (i.e. PR comments)
-          action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "dist/eslutz.github.io"
-          output_location: ""
-          skip_app_build: true
-          ###### End of Repository/Build Configurations ######
-
-  build_and_deploy_prod:
-    if: github.event_name == 'push'
-    name: Deploy to Prod
-    runs-on: ubuntu-latest
+      name: deployment
+      url: ${{ vars.SITE_URL }}
     outputs:
       PACKAGE_VERSION: ${{ steps.version.outputs.PACKAGE_VERSION }}
-      # Deploy to the prod environment.
-    environment:
-      name: prod-ericslutz.dev
-      url: ${{ vars.PROD_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -81,16 +39,17 @@ jobs:
           echo "package version: $packageVersion"
           echo "PACKAGE_VERSION=$packageVersion" >> $GITHUB_OUTPUT
 
-      - name: Deploy to Prod
+      - name: Build And Deploy
+        id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FLOWER_0E59B2C0F }}
-          repo_token: ${{ secrets.GH_API_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/"
-          output_location: "dist/eslutz.github.io"
+          app_location: "/" # App source code path
+          output_location: "dist/eslutz.github.io" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
       - name: Create Release
@@ -99,7 +58,7 @@ jobs:
           github-token: ${{ secrets.GH_API_TOKEN }}
           script: |
             try {
-              const response = github.rest.repos.createRelease({
+              const response = await github.rest.repos.createRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 tag_name: `${{ steps.version.outputs.PACKAGE_VERSION }}`,
@@ -110,13 +69,17 @@ jobs:
                 generate_release_notes: true,
               });
             } catch (error) {
-              core.setFailed(error.message);
+              if (error.status === 422) {
+                console.log('Release already exists.');
+              } else {
+                core.setFailed(error.message);
+              }
             }
 
-  close_staging_environment:
+  close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    name: Close Staging Environment
     runs-on: ubuntu-latest
+    name: Close Pull Request Job
     steps:
       - name: Close Pull Request
         id: closepullrequest

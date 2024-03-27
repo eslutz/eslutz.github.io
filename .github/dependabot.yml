@@ -16,7 +16,7 @@ updates:
       - "dependencies"
     reviewers:
       - "eslutz"
-      
+
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
