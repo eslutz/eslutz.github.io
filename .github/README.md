@@ -1,3 +1,3 @@
-# eslutz.github.io
+# Portfolio-Website
 
 Portfolio website: [ericslutz.dev](https://www.ericslutz.dev/)
